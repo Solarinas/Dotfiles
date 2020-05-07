@@ -30,7 +30,7 @@ font pango:monospace 8
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec alacritty 
+bindsym $mod+Return exec kitty 
 
 # kill focused window
 bindsym $mod+q kill
@@ -186,14 +186,15 @@ exec polybar hack2
 exec polybar main2
 
 # Start Audio
-exec sleep 2 && pulseaudio --start && sleep 1 && cadence-session-start --system-start
-#exec cadence-session-start --system-start
+# exec sleep 2 && pulseaudio --start && sleep 1 && cadence-session-start --system-start
+# exec cadence-session-start --system-start
 
 
 # Window Decorations 
 for_window [class=".*"] border pixel 0
-gaps inner 9
-border_radius 0
+# smart_gaps on
+gaps inner 12
+border_radius 7
 
 # Fix workspaces not starting on the right screen bug
 workspace $ws1 output HDMI-0
@@ -215,34 +216,31 @@ bindsym XF86AudioPrev exec playerctl previous
 bindsym XF86AudioStop exec playerctl stop
 
 # Screenshots
-bindsym Print exec ~/.scripts/screenshot.sh -u 
-bindsym Shift+Print exec ~/.scripts/screenshot.sh -s 
-bindsym $mod+Print exec ~/.scripts/screenshot.sh -m 
+bindsym Print exec ~/bin/screenshot -u 
+bindsym Shift+Print exec ~/bin/screenshot -s 
+bindsym $mod+Print exec ~/bin/screenshot -m 
 bindsym $mod+Shift+Print exec maim -u -d 1 -g 1920x1080+1920+0 -m 3 ~/Pictures/Screenshots/$(date +%F_%H%M%S).png
 
 # Window Rules
 set $float exec --no-startup-id ~/.config/i3/ugly_workaround_script.sh, floating toggle
 
-for_window [instance="ranger"] $float 
-for_window [class="Gnome-calculator"] $float
-for_window [class="Lollypop"] floating enable
-for_window [class="mpv"] floating enable
+for_window [class="Nextcloud"] move scratchpad
 
 # Autostart programs
-exec compton -b
-exec dunst
-exec xrandr --output HDMI-0 --primary --pos 0x0 --output DVI-I-1 --pos 1920x0
+exec xrandr --output DVI-I-1 --pos 0x0 --output HDMI-0 --primary --pos 1920x0
+exec picom --config .picom.conf --experimental-backends 
 exec_always wal -R 
 exec udiskie
+exec deadd-notification-center
 exec redshift
 exec caffeine
-exec blueman-applet
+exec emacs --daemon
+exec sleep 5 && nextcloud
 
 # Custom Keyboard shortcuts
 bindsym $mod+r exec kitty --name ranger -e ranger
 bindsym $mod+p exec bwmenu
-bindsym $mod+e exec emacs
+bindsym $mod+e exec emacsclient -nc
 bindsym $mod+m exec rofimoji
 bindsym $mod+F1 exec pavucontrol 
-bindsym $mod+F2 exec blueman-manager
-
+bindsym $mod+n exec kill -s USR1 $(pidof deadd-notification-center)
